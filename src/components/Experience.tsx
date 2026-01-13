@@ -1,4 +1,4 @@
-import { OrbitControls, Sky, ContactShadows } from "@react-three/drei";
+import { OrbitControls, Sky } from "@react-three/drei";
 import Grass from "./Grass";
 
 
