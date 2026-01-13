@@ -11,10 +11,14 @@ const vertexShader = `
     vUv = uv;
     vec4 instancePosition = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
 
-    float wind = sin(uTime * 2.0 + instancePosition.x * 0.5 + instancePosition.z * 0.5) * 0.1;
+    float windDistortion = sin(instancePosition.x * 0.5 + instancePosition.z * 0.5 + uTime);
+    float wind = windDistortion * 0.2; // 흔들림 강도 조절
 
     vec3 pos = position;
+
     pos.x += wind  * uv.y;
+    
+    pos.z += (abs(position.x) / 0.075) * 0.05;
     gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(pos, 1.0);
   }
 `;
@@ -43,7 +47,6 @@ const Grass = () => {
   });
 
   const geometry = useMemo(() => {
-    // 세로 세그먼트를 8개로 유지 (부드럽게 깎기 위해)
     const geo = new THREE.PlaneGeometry(0.15, 0.7, 1, 8);
     geo.translate(0, 0.35, 0);
 
@@ -58,7 +61,6 @@ const Grass = () => {
       position.setX(i, x * taper);
     }
 
-    // 정점 데이터를 바꿨으니 업데이트가 필요하다고 알려줌
     position.needsUpdate = true;
     return geo;
   }, []);
